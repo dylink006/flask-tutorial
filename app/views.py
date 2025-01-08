@@ -252,3 +252,24 @@ def get_report(path):
         return send_from_directory(app.config["CLIENT_REPORTS"], filename=path, as_attatchment=True)
     except FileNotFoundError:
         abort(404)
+
+@app.route("/cookies")
+def cookies():
+    res = make_response(render_template("cookies.html"))
+
+    res.set_cookie(
+        "flavor",
+        value="chocolate chip",
+        max_age=10,
+        expires=None,
+        path=request.path,
+        domain=None,
+        secure=True,
+        httponly=None,
+        samesite=True
+        )
+
+    res.set_cookie("chocolate type", "dark")
+    res.set_cookie("chewy", "yes")
+
+    return res
