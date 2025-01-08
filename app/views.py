@@ -212,3 +212,43 @@ def uploard_image():
             return redirect(request.url)
 
     return render_template("public/upload_image.html")
+
+from flask import send_from_directory, abort
+
+"""
+string:
+int:
+float:
+path:
+uuid:
+"""
+
+app.config["CLIENT_IMAGES"] = "/Users/dylmcgarry/Desktop/startups/route-pics/app/static/client/img"
+app.config["CLIENT_CSV"] = "/Users/dylmcgarry/Desktop/startups/route-pics/app/static/client/csv"
+app.config["CLIENT_REPORTS"] = "/Users/dylmcgarry/Desktop/startups/route-pics/app/static/client/reports"
+
+
+
+@app.route("/get-image/<image_name>")
+def get_image(image_name):
+    
+    try:
+        return send_from_directory(app.config["CLIENT_IMAGES"], filename=image_name, as_attatchment=False)
+    except FileNotFoundError:
+        abort(404)
+
+@app.route("/get-csv/<filename>")
+def get_csv(filename):
+    
+    try:
+        return send_from_directory(app.config["CLIENT_CSV"], filename=filename, as_attatchment=True)
+    except FileNotFoundError:
+        abort(404)
+
+@app.route("/get-report/<path:path>")
+def get_report(path):
+    
+    try:
+        return send_from_directory(app.config["CLIENT_REPORTS"], filename=path, as_attatchment=True)
+    except FileNotFoundError:
+        abort(404)
