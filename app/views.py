@@ -167,6 +167,7 @@ def query():
 
 app.config["IMAGE_UPLOADS"] = "/Users/dylmcgarry/Desktop/startups/route-pics/app/static/img/uploads"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["PNG", "JPG", "JPEG", "GIF"]
+app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
 
 def allowed_image(filename):
     if not "." in filename:
@@ -177,11 +178,21 @@ def allowed_image(filename):
     else:
         return False
 
+def allowed_image_filesize(filesize):
+    if int(filesize) <= app.config["MAX_IMAGE_FILESIZE"]:
+        return True
+    else:
+        return False
+
 @app.route("/upload-image", methods=["GET", "POST"])
 def uploard_image():
 
     if request.method == "POST":
         if request.files:
+            if not allowed_image_filesize(request.cookies.get("filesize")):
+                print("File exceeded maximum size")
+                return redirect(request.url)
+
             image = request.files["image"]
 
             if image.filename == "":
